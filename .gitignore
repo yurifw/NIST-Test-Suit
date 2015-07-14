@@ -13,3 +13,8 @@ hs_err_pid*
 
 #Linux files
 *~
+
+#Netbeans Files
+build.xml
+manifest.mf
+nbproject/
