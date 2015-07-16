@@ -11,8 +11,12 @@ import org.apache.commons.math.distribution.GammaDistributionImpl;
 import util.GaussJordan;
 
 /**
- * <p>Teste da Posto da Matriz Binária</p>
- * <p>Classe responsável por verificar se há dependência linear entre o comprimento fixo de subsequências de bits da sequência original</p>
+ * <p>
+ * Teste da Posto da Matriz Binária</p>
+ * <p>
+ * Classe responsável por verificar se há dependência linear entre o comprimento
+ * fixo de subsequências de bits da sequência original</p>
+ *
  * @author Renato Hidaka (renatohidaka@gmail.com)
  * @version 1.0
  * @created 30/06/2010
@@ -22,60 +26,64 @@ public class Teste5 {
     private int n;
     private int N;
     private double valor_p;
-    private List<Matriz> matrizes = new ArrayList<Matriz>();    
+    private List<Matriz> matrizes = new ArrayList<Matriz>();
     private GaussJordan gj = new GaussJordan();
     private int fm;
     private int fm_1;
     private double quiQuadrado;
     private GammaDistributionImpl gama;
     private static final double ALFA = 0.01;
-    
-    public boolean run(Integer[] e, int M, int Q) throws MathException {
 
-        n = e.length;
-        N = (int) Math.floor(n / (M * Q));
-        matrizes.clear();
-        fm = 0;
-        fm_1 = 0;
+    public boolean run(Integer[][] e, int M, int Q) throws MathException {
+        valor_p = 0;
 
-        for (int k = 0, x = 0; k < N; k++) {
+        for (int i = 0; i < e.length; i++) {
+            
+            n = e[i].length;
+            N = (int) Math.floor(n / (M * Q));
+            matrizes.clear();
+            fm = 0;
+            fm_1 = 0;
 
-            double[][] matriz = new double[M][Q];
+            for (int j = 0, x = 0; j < N; j++) {
 
-            for (int i = 0; i < M; i++) {
-                for (int j = 0; j < Q; j++, x++) {
+                double[][] matriz = new double[M][Q];
 
-                    matriz[i][j] = e[x];
+                for (int k = 0; k < M; k++) {
+                    for (int l = 0; l < Q; l++, x++) {
 
+                        matriz[k][l] = e[i][x];
+
+                    }
                 }
+
+                matrizes.add(new Matriz(matriz, M, Q));
+            } //for k
+
+            for (int j = 0; j < matrizes.size(); j++) {
+
+                int rank = gj.run(matrizes.get(j).getMatriz(), matrizes.get(j).getLinha(), matrizes.get(j).getColuna());
+                matrizes.get(j).setRank(rank);
+
+                if (rank == M) {
+                    fm++;
+                }
+
+                if (rank == (M - 1)) {
+                    fm_1++;
+                }
+
             }
 
-            matrizes.add(new Matriz(matriz, M, Q));
-        } //for k
+            quiQuadrado = (Math.pow(fm - (0.2888 * N), 2) / (0.2888 * N))
+                    + (Math.pow(fm_1 - (0.5776 * N), 2) / (0.5776 * N))
+                    + (Math.pow(N - fm - fm_1 - (0.1336 * N), 2) / (0.1336 * N));
 
-        for (int i = 0; i < matrizes.size(); i++) {
-
-            int rank = gj.run(matrizes.get(i).getMatriz(), matrizes.get(i).getLinha(), matrizes.get(i).getColuna());
-            matrizes.get(i).setRank(rank);
-
-            if(rank == M){
-                fm++;
-            }
-
-            if(rank == (M-1)){
-                fm_1++;
-            }
-
+            gama = new GammaDistributionImpl(N / 2d, 1);
+            valor_p += 1 - gama.cumulativeProbability(quiQuadrado / 2d);
         }
-
-        quiQuadrado = (Math.pow(fm - (0.2888 * N), 2) / (0.2888 * N)) +
-                      (Math.pow(fm_1 - (0.5776 * N) , 2) / (0.5776 * N)) +
-                      (Math.pow(N - fm - fm_1 - (0.1336 * N) , 2) / (0.1336 * N));
-
-        gama = new GammaDistributionImpl(N/2d, 1);
-        valor_p = 1 - gama.cumulativeProbability(quiQuadrado/2d);
-        
-      return valor_p > ALFA;
+        valor_p = valor_p / e.length;
+        return valor_p > ALFA;
     }
 
     public double getValor_p() {
@@ -116,6 +124,5 @@ public class Teste5 {
         }
 
     }
-
 
 }
