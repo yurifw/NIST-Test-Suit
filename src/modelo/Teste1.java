@@ -37,23 +37,22 @@ public class Teste1 {
      * @param int[] conjunto de bit
      * @return se valor_p maior que 0,01 conjuto de bit é aleatório
      */
-    public boolean runNormal(Integer[] e) throws MathException {
+    public boolean runNormal(Integer[][] e) throws MathException {
+        valor_p=0;
+        for(int i=0; i< e.length; i++){
+            n = e[i].length;
+            x = new int[n];
+            Sn = 0;
+            for (int j = 0; j < n; j++) {
+                x[j] = (2 * e[i][j]) - 1;
+                Sn += x[j];
+            }
 
-        n = e.length;
-        x = new int[n];
-        Sn = 0;
-        for (int i = 0; i < n; i++) {
-
-            x[i] = (2 * e[i]) - 1;
-            Sn += x[i];
-
+            Sobs = Math.abs(Sn) / Math.sqrt(n);        
+            phi = normal.cumulativeProbability(Sobs);        
+            valor_p += (1 - phi) * 2;
         }
-
-        
-        Sobs = Math.abs(Sn) / Math.sqrt(n);        
-        phi = normal.cumulativeProbability(Sobs);        
-        valor_p = (1 - phi) * 2;
-
+        valor_p = valor_p / e.length;
         return getValor_p() > ALFA;
     }
 
@@ -67,23 +66,25 @@ public class Teste1 {
      * @param int[] conjunto de bit
      * @return se valor_p maior que 0,01 conjuto de bit é aleatório
      */
-    public boolean runT(Integer[] e) throws MathException{
+    public boolean runT(Integer[][] e) throws MathException{
+        valor_p = 0;
+        for (int i =0; i < e.length; i++) {
+            n = e[i].length;
+            x = new int[n];
+            Sn = 0;
+            for (int j = 0; j < n; j++) {
 
-        n = e.length;
-        x = new int[n];
-        Sn = 0;
-        for (int i = 0; i < n; i++) {
+                x[j] = (2 * e[i][j]) - 1;
+                Sn += x[j];
 
-            x[i] = (2 * e[i]) - 1;
-            Sn += x[i];
+            }
 
+            Sobs = Math.abs(Sn) / Math.sqrt(n);
+            distT = new TDistributionImpl(e[i].length - 1);
+            phi = distT.cumulativeProbability(Sobs);
+            valor_p += (1 - phi) * 2;
         }
-        
-        Sobs = Math.abs(Sn) / Math.sqrt(n);
-        distT = new TDistributionImpl(e.length - 1);
-        phi = distT.cumulativeProbability(Sobs);
-        valor_p = (1 - phi) * 2;
-
+        valor_p=valor_p/e.length;
         return getValor_p() > ALFA;
     }
  

@@ -13,18 +13,19 @@ public class ControleTeste1 extends ControleGenerico {
     
     public String run(String arquivo, int distribution) {
         
-        Integer[] e = validarArquivoEntrada(arquivo);
+        Integer[][] e = validarEntrada(arquivo);
         boolean saida;
         
         if(e != null) {
             
             try {
-                saida = distribution == 0 ? teste.runNormal(e) : teste.runT(e);                
+                saida = distribution == 0 ? teste.runNormal(e) : teste.runT(e);
                 return (saida == true ? "Random sequence!" : "Not random sequence!").concat("\np_value="+teste.getValor_p());
                 
             } catch (MathException ex) {
                 return "Error, try again!";
             } catch(OutOfMemoryError om) {
+                om.printStackTrace();
                 return "Out of memory error!";
             }
         }
