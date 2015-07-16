@@ -2,7 +2,6 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package modelo;
 
 import org.apache.commons.math.MathException;
@@ -10,9 +9,12 @@ import org.apache.commons.math.distribution.NormalDistributionImpl;
 import org.apache.commons.math.distribution.TDistributionImpl;
 
 /**
- * <p>Teste da Rodada</p>
- * <p>Classe responsável por verificar se ocorre uma oscilação rápida ou lenta de 0’s e 1’s
- * em uma sequência de bits</p>
+ * <p>
+ * Teste da Rodada</p>
+ * <p>
+ * Classe responsável por verificar se ocorre uma oscilação rápida ou lenta de
+ * 0’s e 1’s em uma sequência de bits</p>
+ *
  * @author Renato Hidaka (renatohidaka@gmail.com)
  * @version 1.0
  * @created 11/06/2010
@@ -30,88 +32,96 @@ public class Teste3 {
     private TDistributionImpl distT;
 
     /**
-     * <p>Método que recebe um conjunto de zeros e uns e verifica a aleatoiedade usando a distribuiao Normal </p>
+     * <p>
+     * Método que recebe um conjunto de zeros e uns e verifica a aleatoiedade
+     * usando a distribuiao Normal </p>
+     *
      * @author Renato Hidaka (renatohidaka@gmail.com)
      * @version 1.0
      * @created 11/06/2010
      * @param int[] conjunto de bit
      * @return se valor_p maior que 0,01 conjuto de bit é aleatório
      */
-    public boolean runNormal(Integer[] e) throws MathException {
-
-        n = e.length;
-        pi = 0;
-        Vobs = 1;
+    public boolean runNormal(Integer[][] e) throws MathException {
+        valor_p = 0;
 
         for (int i = 0; i < e.length; i++) {
 
-            pi += e[i];
-        }
+            n = e[i].length;
+            pi = 0;
+            Vobs = 1;
 
-        pi /= n;
+            for (int j = 0; j < e[i].length; j++) {
 
-        if(Math.abs(pi - 0.5) < 2/Math.pow(n, 0.5)){
-
-            for (int i = 0; i < e.length-1; i++) {
-
-                Vobs += Math.abs(e[i]-e[i+1]);
+                pi += e[i][j];
             }
 
-            z = Math.sqrt(2) * Math.abs(Vobs - 2*n*pi*(1-pi)) / (2* Math.sqrt(2*n)*pi*(1-pi));
-            phi = normal.cumulativeProbability(z);
-            valor_p = (1 - phi) * 2;
+            pi /= n;
 
-            return valor_p > ALFA;
+            if (Math.abs(pi - 0.5) < 2 / Math.pow(n, 0.5)) {
+                
+                for (int j = 0; j < e[i].length - 1; j++) {
+                    Vobs += Math.abs(e[i][j] - e[i][j + 1]);
+                }
 
-        } else{
-
-            return false;//teste não pode ser aplicado
+                z = Math.sqrt(2) * Math.abs(Vobs - 2 * n * pi * (1 - pi)) / (2 * Math.sqrt(2 * n) * pi * (1 - pi));
+                phi = normal.cumulativeProbability(z);
+                valor_p += (1 - phi) * 2;
+            } else {
+                return false;//teste não pode ser aplicado
+            }
         }
+        valor_p = valor_p / e.length;
+        return valor_p > ALFA;
     }
 
-      /**
-     * <p>Método que recebe um conjunto de zeros e uns e verifica a aleatoiedade usando a distribuiao T-Student </p>
+    /**
+     * <p>
+     * Método que recebe um conjunto de zeros e uns e verifica a aleatoiedade
+     * usando a distribuiao T-Student </p>
+     *
      * @author Renato Hidaka (renatohidaka@gmail.com)
      * @version 1.0
      * @created 11/06/2010
      * @param int[] conjunto de bit
      * @return se valor_p maior que 0,01 conjuto de bit é aleatório
      */
-    public boolean runT(Integer[] e) throws MathException {
-
-        n = e.length;
-        pi = 0;
-        Vobs = 1;
-
+    public boolean runT(Integer[][] e) throws MathException {
+        valor_p = 0;
         for (int i = 0; i < e.length; i++) {
+            n = e[i].length;
+            pi = 0;
+            Vobs = 1;
 
-            pi += e[i];
-        }
+            for (int j = 0; j < e[i].length; j++) {
 
-        pi /= n;
-
-        if(Math.abs(pi - 0.5) < 2/Math.pow(n, 0.5)){
-
-            for (int i = 0; i < e.length-1; i++) {
-
-                Vobs += Math.abs(e[i]-e[i+1]);
+                pi += e[i][j];
             }
 
-            z = Math.sqrt(2) * Math.abs(Vobs - 2*n*pi*(1-pi)) / (2* Math.sqrt(2*n)*pi*(1-pi));
-            distT = new TDistributionImpl(n-1);
-            phi = distT.cumulativeProbability(z);
-            valor_p = (1 - phi) * 2;
+            pi /= n;
 
-            return valor_p > ALFA;
+            if (Math.abs(pi - 0.5) < 2 / Math.pow(n, 0.5)) {
 
-        } else{
+                for (int j = 0; j < e[i].length - 1; j++) {
 
-            return false;//teste não pode ser aplicado
+                    Vobs += Math.abs(e[i][j] - e[i][j + 1]);
+                }
+
+                z = Math.sqrt(2) * Math.abs(Vobs - 2 * n * pi * (1 - pi)) / (2 * Math.sqrt(2 * n) * pi * (1 - pi));
+                distT = new TDistributionImpl(n - 1);
+                phi = distT.cumulativeProbability(z);
+                valor_p += (1 - phi) * 2;
+
+            } else {
+                return false;//teste não pode ser aplicado
+            }
         }
+        valor_p = valor_p / e.length;
+        return valor_p > ALFA;
     }
-  
+
     public double getValor_p() {
         return valor_p;
     }
-    
+
 }

@@ -19,7 +19,7 @@ public class ControleTeste3 extends ControleGenerico {
     
     public String run(String arquivo, int distribution) {
         
-        Integer[] e = validarArquivoEntrada(arquivo);
+        Integer[][] e = validarEntrada(arquivo);
         boolean saida;
         
         if(e != null) {
