@@ -1521,7 +1521,7 @@ public class Tela extends javax.swing.JFrame {
 
         raiz.add(teste_15, "teste_15");
 
-        jMenu1.setText("Test Suite");
+        jMenu1.setLabel("Test Suite (All significance levels are fixed to 0.001)");
 
         jMenuItem1.setText("1- Frequency");
         jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
@@ -2195,6 +2195,7 @@ public class Tela extends javax.swing.JFrame {
     private String abrirArquivo() {
 
         JFileChooser selecao = new JFileChooser(diretorio);
+        selecao.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 
         if (selecao.showOpenDialog(selecao) == JFileChooser.APPROVE_OPTION) {
             diretorio = selecao.getSelectedFile().getPath();
