@@ -33,37 +33,38 @@ public class Teste2 {
      * @param int[] conjunto de bit
      * @return se valor_p maior que 0,01 conjuto de bit é aleatório
      */
-    public boolean run(Integer[] e, int M) throws MathException {
+    public boolean run(Integer[][] e, int M) throws MathException {
+        valor_p = 0;
+        for (int j = 0; j< e.length; j++){
+            
+            n = e[j].length;
+            N = (int) Math.floor(n / M);
+            phi = new double[N];
 
-        n = e.length;
-        N = (int) Math.floor(n / M);
-        phi = new double[N];
+            for (int i = 0; i < phi.length; i++) {
+                for (int k = 0; k < M; k++) {
+                    phi[i] += e[j][(i) * M + k];
 
-        for (int i = 0; i < phi.length; i++) {
-
-            for (int j = 0; j < M; j++) {
-
-                phi[i] += e[(i) * M + j];
-
-            }
+                }
 
             phi[i] /= M;
 
+            }
+
+            double temp = 0.0;
+
+            for (int i = 0; i < N; i++) {
+
+                temp += Math.pow(phi[i] - 0.5, 2);
+
+            }
+
+            quiQuadrado = 4 * M * temp;
+
+            gama = new GammaDistributionImpl(N / 2d, 1);
+            valor_p += 1 - gama.cumulativeProbability(quiQuadrado / 2d);
         }
-
-        double temp = 0.0;
-
-        for (int i = 0; i < N; i++) {
-
-            temp += Math.pow(phi[i] - 0.5, 2);
-
-        }
-
-        quiQuadrado = 4 * M * temp;
-
-        gama = new GammaDistributionImpl(N / 2d, 1);
-        valor_p = 1 - gama.cumulativeProbability(quiQuadrado / 2d);
-
+        valor_p = valor_p / e.length;
         return valor_p > ALFA;
 
     }

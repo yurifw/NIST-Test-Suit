@@ -17,36 +17,28 @@ public class ControleTeste2 extends ControleGenerico {
     private final Teste2 teste = new Teste2();
 
     public String run(String arquivo, String bloco) {
+        try {
+            Integer[][] e = validarEntrada(arquivo);
+            boolean saida;
+            int M = Integer.parseInt(bloco);
 
-        Integer[] e = validarArquivoEntrada(arquivo);
-        boolean saida;
-        int M;
-        
-        if (e != null) {
-            try {
-
-                M = Integer.parseInt(bloco);
-
-            } catch (NumberFormatException ex) {
-                return "Number of blocks must to be filled with numbers!";
+            for (int i = 0; i < e.length; i++) {
+                if (e[i].length < M || M <= 0) {
+                    return "Number of blocks is invalid!";
+                }
             }
+            saida = teste.run(e, M);
+            return (saida == true ? "Random sequence!" : "Not random sequence!").concat("\np_value=" + teste.getValor_p());
 
-            if (e.length < M || M <= 0) {
-                return "Number of blocks is invalid!";
-            }
-
-            try {
-                saida = teste.run(e, M);
-                return (saida == true ? "Random sequence!" : "Not random sequence!").concat("\np_value=" + teste.getValor_p());
-
-            } catch (MathException ex) {
-                return "Error, try again!";
-            } catch(OutOfMemoryError om) {
-                return "Out of memory error!";
-            }
+        } catch (MathException ex) {
+            ex.printStackTrace();
+            return "Error, try again!";
+        } catch (OutOfMemoryError om) {
+            om.printStackTrace();
+            return "Out of memory error!";
+        } catch (NumberFormatException ex) {
+            ex.printStackTrace();
+            return "Number of blocks must to be filled with numbers!";
         }
-
-        return msgErro;
     }
-
 }
