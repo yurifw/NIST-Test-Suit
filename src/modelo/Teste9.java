@@ -10,8 +10,12 @@ import org.apache.commons.math.distribution.NormalDistributionImpl;
 import org.apache.commons.math.distribution.TDistributionImpl;
 
 /**
- * <p>Teste Estatístico Universal de Maurer</p>
- * <p>Classe responsável por verificar se uma sequência de bits pode ser longa sem haver perda de informação</p>
+ * <p>
+ * Teste Estatístico Universal de Maurer</p>
+ * <p>
+ * Classe responsável por verificar se uma sequência de bits pode ser longa sem
+ * haver perda de informação</p>
+ *
  * @author Renato Hidaka (renatohidaka@gmail.com)
  * @version 1.0
  * @created 05/07/2010
@@ -32,127 +36,133 @@ public class Teste9 {
     private NormalDistributionImpl normal = new NormalDistributionImpl();
     private TDistributionImpl distT;
 
-    public boolean runNormal(Integer[] e, int L, int Q) throws MathException {
+    public boolean runNormal(Integer[][] e, int L, int Q) throws MathException {
+        valor_p = 0;
+        for (int l = 0; l < e.length; l++) {
+            n = e[l].length;
+            K = (int) Math.floor(n / L) - Q;
+            Lbit = new HashMap<String, Integer>();
+            inicializacao = new HashMap<Integer, String>();
+            teste = new HashMap<Integer, String>();
+            String temp = null;
+            int i = 0;
+            for (int j = 0; j < Q; j++, i += L) {
 
-        n = e.length;
-        K = (int) Math.floor(n / L) - Q;
-        Lbit = new HashMap<String, Integer>();
-        inicializacao = new HashMap<Integer, String>();
-        teste = new HashMap<Integer, String>();
-        String temp = null;
-        int i = 0;
-        for (int j = 0; j < Q; j++, i += L) {
+                temp = "";
+                for (int k = i; k < L + i; k++) {
 
-            temp = "";
-            for (int k = i; k < L + i; k++) {
+                    temp = temp.concat(String.valueOf(e[l][k]));
+                }
 
-                temp = temp.concat(String.valueOf(e[k]));
+                inicializacao.put(j + 1, temp);
             }
 
-            inicializacao.put(j + 1, temp);
-        }
+            for (int j = Q; j < (K + Q); j++, i += L) {
 
-        for (int j = Q; j < (K + Q); j++, i += L) {
+                temp = "";
+                for (int k = i; k < L + i; k++) {
 
-            temp = "";
-            for (int k = i; k < L + i; k++) {
+                    temp = temp.concat(String.valueOf(e[l][k]));
+                }
 
-                temp = temp.concat(String.valueOf(e[k]));
+                teste.put(j + 1, temp);
             }
 
-            teste.put(j + 1, temp);
+            montaTabela(L);
+
+            for (int j = 0; j < inicializacao.size(); j++) {
+
+                temp = inicializacao.get(j + 1);
+                Lbit.put(temp, j + 1);
+
+            }
+
+            double soma = 0;
+            for (int j = Q; j < (K + Q); j++) {
+
+                temp = teste.get(j + 1);
+
+                soma += Math.log((j + 1) - Lbit.get(temp)) / Math.log(2);
+                Lbit.put(temp, j + 1);
+
+            }
+
+            fn = soma / K;
+
+            montaTabelaL();
+
+            z = Math.abs((fn - tabelaL.get(L).getMedia()) / Math.sqrt(tabelaL.get(L).getVariancia()));
+            phi = normal.cumulativeProbability(z);
+            valor_p += (1 - phi) * 2;
         }
-
-        montaTabela(L);
-
-        for (int j = 0; j < inicializacao.size(); j++) {
-
-            temp = inicializacao.get(j + 1);
-            Lbit.put(temp, j + 1);
-
-        }
-
-        double soma = 0;
-        for (int j = Q; j < (K + Q); j++) {
-
-            temp = teste.get(j + 1);
-
-            soma += Math.log((j + 1) - Lbit.get(temp)) / Math.log(2);
-            Lbit.put(temp, j + 1);
-
-        }
-
-        fn = soma / K;
-
-        montaTabelaL();
-
-        z = Math.abs((fn - tabelaL.get(L).getMedia()) / Math.sqrt(tabelaL.get(L).getVariancia()));
-        phi = normal.cumulativeProbability(z);
-        valor_p = (1 - phi) * 2;
-
+        valor_p = valor_p / e.length;
 
         return valor_p > ALFA;
     }
 
-    public boolean runT(Integer[] e, int L, int Q) throws MathException {
+    public boolean runT(Integer[][] e, int L, int Q) throws MathException {
 
-        n = e.length;
-        K = (int) Math.floor(n / L) - Q;
-        Lbit = new HashMap<String, Integer>();
-        inicializacao = new HashMap<Integer, String>();
-        teste = new HashMap<Integer, String>();
-        String temp = null;
-        int i = 0;
-        for (int j = 0; j < Q; j++, i += L) {
+        valor_p = 0;
+        for (int l = 0; l < e.length; l++) {
+            n = e[l].length;
+            K = (int) Math.floor(n / L) - Q;
+            Lbit = new HashMap<String, Integer>();
+            inicializacao = new HashMap<Integer, String>();
+            teste = new HashMap<Integer, String>();
+            String temp = null;
+            int i = 0;
+            for (int j = 0; j < Q; j++, i += L) {
 
-            temp = "";
-            for (int k = i; k < L + i; k++) {
+                temp = "";
+                for (int k = i; k < L + i; k++) {
 
-                temp = temp.concat(String.valueOf(e[k]));
+                    temp = temp.concat(String.valueOf(e[l][k]));
+                }
+
+                inicializacao.put(j + 1, temp);
             }
 
-            inicializacao.put(j + 1, temp);
-        }
+            for (int j = Q; j < (K + Q); j++, i += L) {
 
-        for (int j = Q; j < (K + Q); j++, i += L) {
+                temp = "";
+                for (int k = i; k < L + i; k++) {
 
-            temp = "";
-            for (int k = i; k < L + i; k++) {
+                    temp = temp.concat(String.valueOf(e[l][k]));
+                }
 
-                temp = temp.concat(String.valueOf(e[k]));
+                teste.put(j + 1, temp);
             }
 
-            teste.put(j + 1, temp);
+            montaTabela(L);
+
+            for (int j = 0; j < inicializacao.size(); j++) {
+
+                temp = inicializacao.get(j + 1);
+                Lbit.put(temp, j + 1);
+
+            }
+
+            double soma = 0;
+            for (int j = Q; j < (K + Q); j++) {
+
+                temp = teste.get(j + 1);
+
+                soma += Math.log((j + 1) - Lbit.get(temp)) / Math.log(2);
+                Lbit.put(temp, j + 1);
+
+            }
+
+            fn = soma / K;
+
+            montaTabelaL();
+
+            z = Math.abs((fn - tabelaL.get(L).getMedia()) / Math.sqrt(tabelaL.get(L).getVariancia()));
+            distT = new TDistributionImpl(e[l].length - 1);
+            phi = distT.cumulativeProbability(z);
+            valor_p += (1 - phi) * 2;
         }
+        valor_p = valor_p / e.length;
 
-        montaTabela(L);
-
-        for (int j = 0; j < inicializacao.size(); j++) {
-
-            temp = inicializacao.get(j + 1);
-            Lbit.put(temp, j + 1);
-
-        }
-
-        double soma = 0;
-        for (int j = Q; j < (K + Q); j++) {
-
-            temp = teste.get(j + 1);
-
-            soma += Math.log((j + 1) - Lbit.get(temp)) / Math.log(2);
-            Lbit.put(temp, j + 1);
-
-        }
-
-        fn = soma / K;
-
-        montaTabelaL();
-
-        z = Math.abs((fn - tabelaL.get(L).getMedia()) / Math.sqrt(tabelaL.get(L).getVariancia()));
-        distT = new TDistributionImpl(e.length - 1);
-        phi = distT.cumulativeProbability(z);   
-        valor_p = (1 - phi) * 2;
-        
         return valor_p > ALFA;
     }
 
