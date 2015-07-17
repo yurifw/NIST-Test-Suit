@@ -19,31 +19,33 @@ public class ControleTeste10 extends ControleGenerico {
     
         public String run(String arquivo, String bloco) {
 
-        Integer[] e = validarArquivoEntrada(arquivo);
-        boolean saida;
-        int M;
-        
-        if (e != null) {
-            try {
+        Integer[][] e = validarEntrada(arquivo);
+        for (int i =0; i< e.length; i++){
+            boolean saida;
+            int M;
 
-                M = Integer.parseInt(bloco);
+            if (e[i] != null) {
+                try {
 
-            } catch (NumberFormatException ex) {
-                return "Block length must to be filled with numbers!";
-            }
+                    M = Integer.parseInt(bloco);
 
-            if (e.length < M || M <= 0) {
-                return "Block length is invalid!";
-            }
+                } catch (NumberFormatException ex) {
+                    return "Block length must to be filled with numbers!";
+                }
 
-            try {
-                saida = teste.run(e, M);
-                return (saida == true ? "Random sequence!" : "Not random sequence!").concat("\np_value=" + teste.getValor_p());
+                if (e[i].length < M || M <= 0) {
+                    return "Block length is invalid!";
+                }
 
-            } catch (MathException ex) {
-                return "Error, try again!";
-            } catch(OutOfMemoryError om) {
-                return "Out of memory error!";
+                try {
+                    saida = teste.run(e, M);
+                    return (saida == true ? "Random sequence!" : "Not random sequence!").concat("\np_value=" + teste.getValor_p());
+
+                } catch (MathException ex) {
+                    return "Error, try again!";
+                } catch(OutOfMemoryError om) {
+                    return "Out of memory error!";
+                }
             }
         }
 

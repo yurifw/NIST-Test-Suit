@@ -27,46 +27,47 @@ public class Teste10 {
     private GammaDistributionImpl gama;
     private static final double ALFA = 0.01;
 
-    public boolean run(Integer[] e, int M) throws MathException {
+    public boolean run(Integer[][] e, int M) throws MathException {
+        valor_p = 0;
+        for (int l = 0; l < e.length; l++) {
+            n = e[l].length;
+            N = n / M;
+            L = new int[N];
+            T = new double[N];
+            Arrays.fill(v, 0);
+            int[] vetor;
 
-        n = e.length;
-        N = n / M;
-        L = new int[N];
-        T = new double[N];
-        Arrays.fill(v, 0);
-        int[] vetor;
-        
+            for (int i = 0, bl = 0; i < L.length; i++, bl += M) {
 
-        for (int i = 0, bl = 0; i < L.length; i++, bl += M) {
+                vetor = new int[M];
+                for (int j = bl, r = 0; j < M + bl; j++, r++) {
+                    vetor[r] = e[l][j];
+                }
 
-            vetor = new int[M];
-            for (int j = bl, r = 0; j < M + bl; j++, r++) {
-                vetor[r] = e[j];
+                L[i] = BerlekampMassey(vetor);
             }
 
-            L[i] = BerlekampMassey(vetor);
+            media = (M / 2d) + ((9 + Math.pow(-1, M + 1)) / 36d) - ((M / 3d - 2 / 9d) / Math.pow(2, M));
+
+            for (int i = 0; i < T.length; i++) {
+
+                T[i] = Math.pow(-1, M) * (L[i] - media) + (2 / 9d);
+
+            }
+
+            tabelaV(T);
+            quiQuadrado = 0;
+            for (int i = 0; i <= k; i++) {
+
+                quiQuadrado += Math.pow(v[i] - (N * pi[i]), 2) / (N * pi[i]);
+            }
+
+            gama = new GammaDistributionImpl(k / 2d, 1);
+
+            valor_p += 1 - gama.cumulativeProbability(quiQuadrado / 2d);
+
         }
-
-        media = (M / 2d) + ((9 + Math.pow(-1, M + 1)) / 36d) - ((M / 3d - 2 / 9d) / Math.pow(2, M));
-
-        for (int i = 0; i < T.length; i++) {
-
-            T[i] = Math.pow(-1, M) * (L[i] - media) + (2 / 9d);
-
-        }
-
-
-        tabelaV(T);
-        quiQuadrado = 0;
-        for (int i = 0; i <= k; i++) {
-
-            quiQuadrado += Math.pow(v[i] - (N * pi[i]), 2) / (N * pi[i]);
-        }
-        
-        gama = new GammaDistributionImpl(k / 2d, 1);
-                
-        valor_p = 1 - gama.cumulativeProbability(quiQuadrado / 2d);
-        
+        valor_p = valor_p / e.length;
         return valor_p > ALFA;
     }
 
@@ -85,15 +86,15 @@ public class Teste10 {
         //Algorithm core
         /*
          * INPUT: a binary sequence sn = s0 , s1 , s2 , . . . , sn−1 of length n.
-        OUTPUT: the linear complexity L(sn ) of sn , 0 ≤ L(sn ) ≤ n.
-        1. Initialization. C(D)←1, L←0, m← − 1, B(D)←1, N ←0.
-        2. While (N < n) do the following:
-        2.1 Compute the next discrepancy d. d←(sN + somatŕio ci sN −i ) mod 2.
-        2.2 If d = 1 then do the following:
-        T (D)←C(D), C(D)←C(D) + B(D) · DN −m .
-        If L ≤ N/2 then L←N + 1 − L, m←N , B(D)←T (D).
-        2.3 N ←N + 1.
-        3. Return().
+         OUTPUT: the linear complexity L(sn ) of sn , 0 ≤ L(sn ) ≤ n.
+         1. Initialization. C(D)←1, L←0, m← − 1, B(D)←1, N ←0.
+         2. While (N < n) do the following:
+         2.1 Compute the next discrepancy d. d←(sN + somatŕio ci sN −i ) mod 2.
+         2.2 If d = 1 then do the following:
+         T (D)←C(D), C(D)←C(D) + B(D) · DN −m .
+         If L ≤ N/2 then L←N + 1 − L, m←N , B(D)←T (D).
+         2.3 N ←N + 1.
+         3. Return().
          */
         while (N_ < n_) {
             d = s[N_];
