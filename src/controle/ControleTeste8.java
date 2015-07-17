@@ -18,39 +18,32 @@ public class ControleTeste8 extends ControleGenerico {
     private final Teste8 teste = new Teste8();
     
     public String run(String arquivo, String bloco, String template) {
+        try {
 
-        Integer[] e = validarArquivoEntrada(arquivo);
-        boolean saida;
-        int N;
-        
-        if (e != null) {
-            try {
+            Integer[][] e = validarEntrada(arquivo);
+            boolean saida;
+            int N;
+            N = Integer.parseInt(bloco);
+            for (int i = 0; i < e.length; i++) {
 
-                N = Integer.parseInt(bloco);
+                if (e[i].length < N || N <= 0) {
+                    return "Number of blocks is invalid!";
+                }
 
-            } catch (NumberFormatException ex) {
-                return "Number of blocks must to be filled with numbers!";
+                if (template == null || template.equals("") || template.length() > (e[i].length / N)) {
+                    return "Template matched is invalid!";
+                }
+
             }
 
-            if (e.length < N || N <= 0) {
-                return "Number of blocks is invalid!";
-            }
-
-            if(template == null || template.equals("") || template.length() > (e.length/N)) {
-                return "Template matched is invalid!";
-            }
-            
-            try {
-                saida = teste.run(e, N, template);
-                return (saida == true ? "Random sequence!" : "Not random sequence!").concat("\np_value=" + teste.getValor_p());
-
-            } catch (MathException ex) {
-                return "Error, try again!";
-            } catch(OutOfMemoryError om) {
-                return "Out of memory error!";
-            }
+            saida = teste.run(e, N, template);
+            return (saida == true ? "Random sequence!" : "Not random sequence!").concat("\np_value=" + teste.getValor_p());
+        } catch (NumberFormatException ex) {
+            return "Number of blocks must to be filled with numbers!";
+        } catch (MathException ex) {
+            return "Error, try again!";
+        } catch (OutOfMemoryError om) {
+            return "Out of memory error!";
         }
-
-        return msgErro;
     }
 }
