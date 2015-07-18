@@ -2,7 +2,6 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package modelo;
 
 import java.util.Arrays;
@@ -26,16 +25,19 @@ public class Teste12 {
     private GammaDistributionImpl gama;
     private static final double ALFA = 0.01;
 
-    public boolean run(Integer[] temp, int m) throws MathException {
+    public boolean run(Integer[][] temp, int m) throws MathException {
 
-        double sigma1 = passo1_4(temp, m);
-        double sigma2 = passo1_4(temp, m+1);
+        valor_p = 0;
+        for (int i = 0; i < temp.length; i++) {
+            double sigma1 = passo1_4(temp[i], m);
+            double sigma2 = passo1_4(temp[i], m + 1);
 
-        quiQuadrado = (Math.log(2) - (sigma1 - sigma2));//verificar o 2*n --->2*n*(Math.log(2) - (sigma1 - sigma2));
+            quiQuadrado = (Math.log(2) - (sigma1 - sigma2));//verificar o 2*n --->2*n*(Math.log(2) - (sigma1 - sigma2));
 
-        gama = new GammaDistributionImpl(Math.pow(2, m-1), 1);
-        valor_p = 1 - gama.cumulativeProbability(quiQuadrado/2d);        
-
+            gama = new GammaDistributionImpl(Math.pow(2, m - 1), 1);
+            valor_p += 1 - gama.cumulativeProbability(quiQuadrado / 2d);
+        }
+        valor_p = valor_p / temp.length;
         return valor_p > ALFA;
     }
 
@@ -49,7 +51,7 @@ public class Teste12 {
         Lbit = new HashMap<String, Integer>();
         freqRelativa = new double[(int) Math.pow(2, m)];
 
-        for (int i = 0, j = temp.length; i < m-1; i++, j++) {
+        for (int i = 0, j = temp.length; i < m - 1; i++, j++) {
 
             e[j] = temp[i];
         }
@@ -59,33 +61,33 @@ public class Teste12 {
         for (int i = 0; i < e.length - (m - 1); i++) {
 
             txt = "";
-            for (int j = i; j < m+i; j++) {
+            for (int j = i; j < m + i; j++) {
 
                 txt = txt.concat(String.valueOf(e[j]));
             }
 
-            Lbit.put(txt, Lbit.get(txt)+1);
+            Lbit.put(txt, Lbit.get(txt) + 1);
         }
 
         TreeSet<String> tree = new TreeSet<String>(Lbit.keySet());
         int cont = 0;
-        
+
         for (String string : tree) {
-            
+
             freqRelativa[cont] = (double) Lbit.get(string) / n;
             cont++;
         }
 
         for (int i = 0; i < freqRelativa.length; i++) {
 
-            if(freqRelativa[i] != 0){
-            sigma += (freqRelativa[i]*Math.log(freqRelativa[i]));
+            if (freqRelativa[i] != 0) {
+                sigma += (freqRelativa[i] * Math.log(freqRelativa[i]));
             }
         }
-        
+
         return sigma;
     }
-    
+
     private void montaTabela(int n) {
 
         int[][] tabela = new int[(int) Math.pow(2, n)][n];
@@ -142,8 +144,7 @@ public class Teste12 {
 
     }
 
-
-     public double getValor_p() {
+    public double getValor_p() {
         return valor_p;
     }
 

@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package controle;
 
 import modelo.Teste12;
@@ -14,40 +13,41 @@ import org.apache.commons.math.MathException;
  * @author renatohidaka
  */
 public class ControleTeste12 extends ControleGenerico {
-    
+
     private final Teste12 teste = new Teste12();
-    
+
     public String run(String arquivo, String bloco) {
 
-        Integer[] e = validarArquivoEntrada(arquivo);
+        Integer[][] e = validarEntrada(arquivo);
         boolean saida;
         int M;
-        
-        if (e != null) {
-            try {
+        for (int i = 0; i < e.length; i++) {
+            if (e[i] != null) {
+                try {
 
-                M = Integer.parseInt(bloco);
+                    M = Integer.parseInt(bloco);
 
-            } catch (NumberFormatException ex) {
-                return "Block length must to be filled with numbers!";
-            }
+                } catch (NumberFormatException ex) {
+                    return "Block length must to be filled with numbers!";
+                }
 
-            if (M > e.length || M <= 0) {
-                return "Block length is invalid!";
-            }
+                if (M > e[i].length || M <= 0) {
+                    return "Block length is invalid!";
+                }
 
-            try {
-                saida = teste.run(e, M);
-                return (saida == true ? "Random sequence!" : "Not random sequence!").concat("\np_value=" + teste.getValor_p());
+                try {
+                    saida = teste.run(e, M);
+                    return (saida == true ? "Random sequence!" : "Not random sequence!").concat("\np_value=" + teste.getValor_p());
 
-            } catch (MathException ex) {
-                return "Error, try again!";
-            } catch(OutOfMemoryError om) {
-                return "Out of memory error!";
+                } catch (MathException ex) {
+                    return "Error, try again!";
+                } catch (OutOfMemoryError om) {
+                    return "Out of memory error!";
+                }
             }
         }
 
         return msgErro;
     }
-    
+
 }
