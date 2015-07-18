@@ -31,148 +31,153 @@ public class Teste15 {
     private TDistributionImpl distT;
     private static final double ALFA = 0.01;
 
-    public boolean runNormal(Integer[] e) throws MathException {
+    public boolean runNormal(Integer[][] e) throws MathException {
+        valor_p = 0;
+        for (int l = 0; l < e.length; l++) {
+            n = e[l].length;
+            J = 0;
+            X = new int[n];
+            S = new int[n];
+            ciclos.clear();
+            S_linha = new int[n + 2];
 
-        n = e.length;
-        J = 0;
-        X = new int[n];
-        S = new int[n];
-        ciclos.clear();
-        S_linha = new int[n + 2];
+            for (int i = 0; i < X.length; i++) {
 
-        for (int i = 0; i < X.length; i++) {
-
-            X[i] = (2 * e[i]) - 1;
-        }
-
-        S_linha[0] = 0;
-        S[0] = X[0];
-        S_linha[1] = S[0];
-
-        for (int i = 1, j = 2; i < X.length; i++, j++) {
-
-            S[i] = S[i - 1] + X[i];
-            S_linha[j] = S[i];
-        }
-
-        S_linha[S_linha.length - 1] = 0;
-
-        int aux = 0;
-        aux = S_linha[0];
-        List<Integer> subCiclo = new ArrayList<Integer>();
-        for (int i = 1; i < S_linha.length; i++) {
-
-
-            if (S_linha[i] == 0 && subCiclo.size() > 0) {
-                J++;
-                ciclos.add(subCiclo);
-                subCiclo = new ArrayList<Integer>();
-
-            } else {
-                subCiclo.add(S_linha[i]);
-            }
-        }
-
-        for (int i = -4; i <= 4; i++) {
-            map.put(i, 0);
-        }
-
-        for (int i = -4; i <= 4; i++) {
-
-            for (List c : ciclos) {
-                map.put(i, map.get(i) + Collections.frequency(c, i));
+                X[i] = (2 * e[l][i]) - 1;
             }
 
-        }
+            S_linha[0] = 0;
+            S[0] = X[0];
+            S_linha[1] = S[0];
 
-        double z = 0;
+            for (int i = 1, j = 2; i < X.length; i++, j++) {
 
-        for (int i = -4; i <= 4; i++, z = 0) {
-
-            if (i == 0) {
-                continue;
+                S[i] = S[i - 1] + X[i];
+                S_linha[j] = S[i];
             }
-            z += Math.abs(map.get(i) - J) / Math.sqrt((J * (4 * Math.abs(i)) - 2));
-            phi = normal.cumulativeProbability(z);
-            valor_p = (1 - phi) * 2;
-                   
-            if (valor_p < ALFA) {
-                return false;
-            }
-        }
 
+            S_linha[S_linha.length - 1] = 0;
+
+            int aux = 0;
+            aux = S_linha[0];
+            List<Integer> subCiclo = new ArrayList<Integer>();
+            for (int i = 1; i < S_linha.length; i++) {
+
+                if (S_linha[i] == 0 && subCiclo.size() > 0) {
+                    J++;
+                    ciclos.add(subCiclo);
+                    subCiclo = new ArrayList<Integer>();
+
+                } else {
+                    subCiclo.add(S_linha[i]);
+                }
+            }
+
+            for (int i = -4; i <= 4; i++) {
+                map.put(i, 0);
+            }
+
+            for (int i = -4; i <= 4; i++) {
+
+                for (List c : ciclos) {
+                    map.put(i, map.get(i) + Collections.frequency(c, i));
+                }
+
+            }
+
+            double z = 0;
+            double v = 0;
+            for (int i = -4; i <= 4; i++, z = 0) {
+
+                if (i == 0) {
+                    continue;
+                }
+                z += Math.abs(map.get(i) - J) / Math.sqrt((J * (4 * Math.abs(i)) - 2));
+                phi = normal.cumulativeProbability(z);
+                v = (1 - phi) * 2;
+
+            }
+            valor_p += v;
+        }
+        valor_p = valor_p / e.length;
+        if (valor_p < ALFA) {
+            return false;
+        }
         return true;
     }
 
-    public boolean runT(Integer[] e) throws MathException {
+    public boolean runT(Integer[][] e) throws MathException {
+        valor_p = 0;
+        for (int l = 0; l < e.length; l++) {
 
-        n = e.length;
-        J = 0;
-        X = new int[n];
-        S = new int[n];
-        ciclos.clear();
-        S_linha = new int[n + 2];
+            n = e[l].length;
+            J = 0;
+            X = new int[n];
+            S = new int[n];
+            ciclos.clear();
+            S_linha = new int[n + 2];
 
-        for (int i = 0; i < X.length; i++) {
-
-            X[i] = (2 * e[i]) - 1;
-        }
-
-        S_linha[0] = 0;
-        S[0] = X[0];
-        S_linha[1] = S[0];
-
-        for (int i = 1, j = 2; i < X.length; i++, j++) {
-
-            S[i] = S[i - 1] + X[i];
-            S_linha[j] = S[i];
-        }
-
-        S_linha[S_linha.length - 1] = 0;
-
-        int aux = 0;
-        aux = S_linha[0];
-        List<Integer> subCiclo = new ArrayList<Integer>();
-        for (int i = 1; i < S_linha.length; i++) {
-
-
-            if (S_linha[i] == 0 && subCiclo.size() > 0) {
-                J++;
-                ciclos.add(subCiclo);
-                subCiclo = new ArrayList<Integer>();
-
-            } else {
-                subCiclo.add(S_linha[i]);
-            }
-        }
-
-        for (int i = -4; i <= 4; i++) {
-            map.put(i, 0);
-        }
-
-        for (int i = -4; i <= 4; i++) {
-
-            for (List c : ciclos) {
-                map.put(i, map.get(i) + Collections.frequency(c, i));
+            for (int i = 0; i < X.length; i++) {
+                X[i] = (2 * e[l][i]) - 1;
             }
 
+            S_linha[0] = 0;
+            S[0] = X[0];
+            S_linha[1] = S[0];
+
+            for (int i = 1, j = 2; i < X.length; i++, j++) {
+
+                S[i] = S[i - 1] + X[i];
+                S_linha[j] = S[i];
+            }
+
+            S_linha[S_linha.length - 1] = 0;
+
+            int aux = 0;
+            aux = S_linha[0];
+            List<Integer> subCiclo = new ArrayList<Integer>();
+            for (int i = 1; i < S_linha.length; i++) {
+
+                if (S_linha[i] == 0 && subCiclo.size() > 0) {
+                    J++;
+                    ciclos.add(subCiclo);
+                    subCiclo = new ArrayList<Integer>();
+
+                } else {
+                    subCiclo.add(S_linha[i]);
+                }
+            }
+
+            for (int i = -4; i <= 4; i++) {
+                map.put(i, 0);
+            }
+
+            for (int i = -4; i <= 4; i++) {
+
+                for (List c : ciclos) {
+                    map.put(i, map.get(i) + Collections.frequency(c, i));
+                }
+
+            }
+
+            double z = 0;
+            double v = 0;
+            for (int i = -4; i <= 4; i++, z = 0) {
+
+                if (i == 0) {
+                    continue;
+                }
+                z += Math.abs(map.get(i) - J) / Math.sqrt((J * (4 * Math.abs(i)) - 2));
+                distT = new TDistributionImpl(e[l].length - 1);
+                phi = distT.cumulativeProbability(z);
+                v = (1 - phi) * 2;
+
+            }
+            valor_p += v;
         }
-
-        double z = 0;
-
-        for (int i = -4; i <= 4; i++, z = 0) {
-
-            if (i == 0) {
-                continue;
-            }
-            z += Math.abs(map.get(i) - J) / Math.sqrt((J * (4 * Math.abs(i)) - 2));
-            distT = new TDistributionImpl(e.length - 1);
-            phi = distT.cumulativeProbability(z);
-            valor_p = (1 - phi) * 2;
-            
-            if (valor_p < ALFA) {
-                return false;
-            }
+        valor_p = valor_p / e.length;
+        if (valor_p < ALFA) {
+            return false;
         }
 
         return true;
