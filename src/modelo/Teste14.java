@@ -37,88 +37,92 @@ public class Teste14 {
         {0.8750000000, 0.01562500000, 0.01367187500, 0.01196289063, 0.01046752930, 0.0732727051}
     };
 
-    public boolean run(Integer[] e) throws MathException {
+    public boolean run(Integer[][] e) throws MathException {
+        valor_p = 0;
+        for (int l = 0; l < e.length; l++) {
+            n = e[l].length;
+            J = 0;
+            map.clear();
+            ciclos.clear();
+            X = new int[n];
+            S = new int[n];
+            S_linha = new int[n + 2];
 
-        n = e.length;
-        J = 0;
-        map.clear();
-        ciclos.clear();
-        X = new int[n];
-        S = new int[n];
-        S_linha = new int[n + 2];
+            for (int i = 0; i < X.length; i++) {
 
-        for (int i = 0; i < X.length; i++) {
+                X[i] = (2 * e[l][i]) - 1;
+            }
+            S_linha[0] = 0;
+            S[0] = X[0];
+            S_linha[1] = S[0];
 
-            X[i] = (2 * e[i]) - 1;
-        }
-        S_linha[0] = 0;
-        S[0] = X[0];
-        S_linha[1] = S[0];
+            for (int i = 1, j = 2; i < X.length; i++, j++) {
 
-        for (int i = 1, j = 2; i < X.length; i++, j++) {
-
-            S[i] = S[i - 1] + X[i];
-            S_linha[j] = S[i];
-        }
-
-        S_linha[S_linha.length - 1] = 0;
-
-        int aux = 0;
-        aux = S_linha[0];
-        List<Integer> subCiclo = new ArrayList<Integer>();
-        for (int i = 1; i < S_linha.length; i++) {
-
-
-            if (S_linha[i] == 0 && subCiclo.size() > 0) {
-                J++;
-                ciclos.add(subCiclo);
-                subCiclo = new ArrayList<Integer>();
-
-            } else {
-                subCiclo.add(S_linha[i]);
+                S[i] = S[i - 1] + X[i];
+                S_linha[j] = S[i];
             }
 
-        }
+            S_linha[S_linha.length - 1] = 0;
 
-        int cont = 0;
+            int aux = 0;
+            aux = S_linha[0];
+            List<Integer> subCiclo = new ArrayList<Integer>();
+            for (int i = 1; i < S_linha.length; i++) {
 
-        for (int j = -4; j <= 4; j++) {
+                if (S_linha[i] == 0 && subCiclo.size() > 0) {
+                    J++;
+                    ciclos.add(subCiclo);
+                    subCiclo = new ArrayList<Integer>();
 
-            if (j != 0) {
-                ciclos5 = new int[]{0, 0, 0, 0, 0, 0};
-                for (int i = 0; i < J; i++) {
-
-                    cont = Collections.frequency(ciclos.get(i), j);
-                    cont = cont > 5 ? 5 : cont;
-                    ciclos5[cont]++;
-
+                } else {
+                    subCiclo.add(S_linha[i]);
                 }
-
-                map.put(j, ciclos5);
 
             }
 
-        }
+            int cont = 0;
 
-        for (int j = -4; j <= 4; j++) {
+            for (int j = -4; j <= 4; j++) {
 
-            if (j != 0) {
-                quiQuadrado = 0;
+                if (j != 0) {
+                    ciclos5 = new int[]{0, 0, 0, 0, 0, 0};
+                    for (int i = 0; i < J; i++) {
 
-                for (int i = 0; i < 6; i++) {
+                        cont = Collections.frequency(ciclos.get(i), j);
+                        cont = cont > 5 ? 5 : cont;
+                        ciclos5[cont]++;
 
-                    quiQuadrado += Math.pow(map.get(j)[i] - (J * pi[(int) Math.abs(j)][i]), 2) / (J * pi[(int) Math.abs(j)][i]);
+                    }
+
+                    map.put(j, ciclos5);
+
                 }
 
-                gama = new GammaDistributionImpl(5 / 2d, 1);
-                valor_p = 1 - gama.cumulativeProbability(quiQuadrado / 2d);
+            }
+            double v=0;
+            for (int j = -4; j <= 4; j++) {
 
-                if (valor_p < ALFA) {
-                    return false;
+                if (j != 0) {
+                    quiQuadrado = 0;
+
+                    for (int i = 0; i < 6; i++) {
+
+                        quiQuadrado += Math.pow(map.get(j)[i] - (J * pi[(int) Math.abs(j)][i]), 2) / (J * pi[(int) Math.abs(j)][i]);
+                    }
+
+                    gama = new GammaDistributionImpl(5 / 2d, 1);
+//                    valor_p = 1 - gama.cumulativeProbability(quiQuadrado / 2d);
+                    v = 1 - gama.cumulativeProbability(quiQuadrado / 2d);
+
+                    
                 }
             }
+            valor_p += v;
         }
-
+        valor_p = valor_p / e.length;
+        if (valor_p < ALFA) {
+                        return false;
+                    }
         return true;
 
     }
@@ -126,5 +130,5 @@ public class Teste14 {
     public double getValor_p() {
         return valor_p;
     }
-    
+
 }
